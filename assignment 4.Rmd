@@ -17,10 +17,20 @@ library(janitor)
 
 ```{r import data}
 #import damages data set
-damages <- read_csv(here("damages.csv"))
+damages <- read_csv(here("damages.csv")) %>% 
+  #rename column damages because having it names the same thing as the dataset is super stupid
+  mutate(harm = damages) %>% 
+  select(-damages)
 
 #import warming data set
 warming <- read_csv(here("warming.csv"))
 
+```
+
+```{r question 1}
+# first add a column to the dataset of damages squared because it seems lm wants that to do a quadratic fit
+damages_fit <- damages %>% 
+  mutate(harm2 = harm^2)
+  
 ```
 
