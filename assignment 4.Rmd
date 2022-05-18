@@ -41,12 +41,12 @@ quad_func <- function(warming){
   return(harm)
 }
 
-damages_fit <- damages_fit%>% 
-  mutate(harm_fit = quad_func(warming))
+# populate
+damages_fit$harm_fit = quad_func(warming))
 
-ggplot(data = damages_fit)+
+ggplot(data = damages_fit, aes(x = warming, y = harm))+
   geom_point(aes(x = warming, y = harm))+
-geom_line(aes(x = warming, y = harm_fit))
+  
   
 ```
 
