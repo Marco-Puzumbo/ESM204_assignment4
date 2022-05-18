@@ -30,9 +30,23 @@ warming <- read_csv(here("warming.csv"))
 ```{r question 1}
 # first add a column to the dataset of damages squared because it seems lm wants that to do a quadratic fit
 damages_fit <- damages %>% 
-  mutate(harm2 = harm^2)
+  mutate(warming2 = warming^2)
 
-quad_fit <- lm(warming ~ harm + harm2, data = damages_fit)
+# perform fit
+quad_fit <- lm(harm ~ warming + warming2 + 0, data = damages_fit)
+summary(quad_fit)
+
+quad_func <- function(warming){
+  harm <- quad_fit$coefficients[1]*warming + quad_fit$coefficients[2]*warming^2
+  return(harm)
+}
+
+damages_fit <- damages_fit%>% 
+  mutate(harm_fit = quad_func(warming))
+
+ggplot(data = damages_fit)+
+  geom_point(aes(x = warming, y = harm))+
+geom_line(aes(x = warming, y = harm_fit))
   
 ```
 
