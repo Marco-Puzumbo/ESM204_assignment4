@@ -1,0 +1,26 @@
+---
+title: "Assignment 4"
+author: "Marco Palombo"
+date: "5/17/2022"
+output: html_document: 
+    code_folding: hide
+---
+
+```{r setup, include = FALSE, message = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+
+# include packages
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+```{r import data}
+#import damages data set
+damages <- read_csv(here("damages.csv"))
+
+#import warming data set
+warming <- read_csv(here("warming.csv"))
+
+```
+
