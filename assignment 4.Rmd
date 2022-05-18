@@ -31,6 +31,8 @@ warming <- read_csv(here("warming.csv"))
 # first add a column to the dataset of damages squared because it seems lm wants that to do a quadratic fit
 damages_fit <- damages %>% 
   mutate(harm2 = harm^2)
+
+quad_fit <- lm(warming ~ harm + harm2, data = damages_fit)
   
 ```
 
