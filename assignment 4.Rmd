@@ -76,22 +76,26 @@ warming$dif_per_ton <- warming$dif/35e9
 # no pulse
 ggplot(data = warming)+
   geom_point(aes(x = year, y = nopulse_damage))+
-  labs(title = "no pulse", x = "Calendar year", y = "Damages (unknown units)")
+  labs(title = "no pulse", x = "Calendar year", y = "Damages (unknown units)", 
+       caption = "Figure 2: damages from no pusle with respect to year")
 
 # pulse
 ggplot(data = warming)+
   geom_point(aes(x = year, y = pulse_damage))+
-  labs(title = "pulse", x = "Calendar year", y = "Damages (unknown units)")
+  labs(title = "pulse", x = "Calendar year", y = "Damages (unknown units)", 
+       caption = "Figure 3: damages from pulse with respect to year")
 
 # difference
 ggplot(data = warming)+
   geom_point(aes(x = year, y = dif))+
-  labs(title = "difference", x = "Calendar year", y = "Damages (unknown units)")
+  labs(title = "difference", x = "Calendar year", y = "Damages (unknown units)", 
+       caption = "Figure 4: difference in damages with respect to year")
 
 # difference per ton
 ggplot(data = warming)+
   geom_point(aes(x = year, y = dif_per_ton))+
-  labs(title = "difference per ton", x = "Calendar year", y = "Damages (unknown units)")
+  labs(title = "difference per ton", x = "Calendar year", y = "Damages (unknown units)", 
+       caption = "Figure 5: difference in damages per tone CO2 with respect to year")
 ```
 
 ## Question 3
@@ -109,13 +113,21 @@ net_harm_per_ton <- sum(warming$dif_per_ton)
 
 discount_damages <- function(rate, damage, time, present_time){
   NPV <- damage/ (1 + (rate/100))^(time-present_time)
+  return(NPV)
 }
 
-#create function that sums the total discuntounted damages up to a given year for a certain discount rate.
-SCC <- function(rate){
-discount_damage_per_ton <- discounts(rate,warming$dif_per_ton, warming$year, 2021)
-SCC <- sum(discount_damage_per_ton)
-return(SCC)
+# initialize dataframe for discounting
+discount <- data_frame(rates = seq(0,10, 0.1), SCC = seq(0,10, 0.1))
+
+#use for loop to calculate discounted damages up to 2100 for discount rates from 0 to 10
+for(x in 0:length(discount$rates)){
+  #apply function from above and sum all elements in column to find net discounted cost
+  discount$SCC[x] <- sum(discount_damages(discount$rates[x],warming$dif_per_ton, warming$year, 2021))
 }
+
+ggplot(data = discount)+
+  geom_point(aes(x = rates, y = SCC))
+
 ```
 
+**Figure 
