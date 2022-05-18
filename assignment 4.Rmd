@@ -155,3 +155,5 @@ ggplot(data = discount)+
 ```
 
 **Figure 7: Net present value of future damages between 2021 and 2100 at time 2021 discounted with respect to various discount rates. Blue point shows discount rate and SCC associatd with recommendation made by The National Academies of Sciences, Engineering, and Medicine**
+
+r value using this equation will be: `r r_gordon_ramsey`
