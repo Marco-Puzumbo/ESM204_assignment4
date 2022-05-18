@@ -130,4 +130,28 @@ ggplot(data = discount)+
 
 ```
 
-**Figure 
+**Figure 6: net present value of future damages between 2021 and 2100 at time 2021 discounted with respect to various discount rates**
+
+
+## Question 4
+
+```{r}
+#determine r from the equation given
+#define values
+rho <- .001 
+eta <- 2 
+g <- .01
+
+#plug into the Gordon Ramsay Rule
+r_gordon_ramsey <- rho + eta*g
+
+# now plug into the previous equation and sum to find SCC
+discount_gordon_ramsey <- sum(discount_damages(r_gordon_ramsey,warming$dif_per_ton, warming$year, 2021))
+
+#plot this dumb thing
+ggplot(data = discount)+
+  geom_point(aes(x = rates, y = SCC))+
+  geom_point(x = r_gordon_ramsey, y = discount_gordon_ramsey, color = "blue", size = 4)
+```
+
+**Figure 7: Net present value of future damages between 2021 and 2100 at time 2021 discounted with respect to various discount rates. Blue point shows discount rate and SCC associatd with recommendation made by The National Academies of Sciences, Engineering, and Medicine**
