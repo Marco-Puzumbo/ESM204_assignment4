@@ -75,22 +75,47 @@ warming$dif_per_ton <- warming$dif/35e9
 # now generate the plots
 # no pulse
 ggplot(data = warming)+
-  geom_line(aes(x = year, y = nopulse_damage))+
+  geom_point(aes(x = year, y = nopulse_damage))+
   labs(title = "no pulse", x = "Calendar year", y = "Damages (unknown units)")
 
 # pulse
 ggplot(data = warming)+
-  geom_line(aes(x = year, y = pulse_damage))+
+  geom_point(aes(x = year, y = pulse_damage))+
   labs(title = "pulse", x = "Calendar year", y = "Damages (unknown units)")
 
 # difference
 ggplot(data = warming)+
-  geom_line(aes(x = year, y = dif))+
+  geom_point(aes(x = year, y = dif))+
   labs(title = "difference", x = "Calendar year", y = "Damages (unknown units)")
 
 # difference per ton
 ggplot(data = warming)+
-  geom_line(aes(x = year, y = dif_per_ton))+
+  geom_point(aes(x = year, y = dif_per_ton))+
   labs(title = "difference per ton", x = "Calendar year", y = "Damages (unknown units)")
+```
+
+## Question 3
+
+```{r}
+# first calculate the net damages up to 2100 due to single tone of CO2. this will be accomplished by summing the column defined as the difference per ton
+net_harm_per_ton <- sum(warming$dif_per_ton)
+
+#create function of net present value 
+#inputs
+#rate: discount rate (%)
+#damage: total damages at time t
+#time: time at which damages have accrued
+#present_time: time at which net present value is calculated
+
+discount_damages <- function(rate, damage, time, present_time){
+  NPV <- damage/ (1 + (rate/100))^(time-present_time)
+}
+
+#create function that sums the total discuntounted damages up to a given year for a certain discount rate.
+SCC <- function(rate){
+discount_damage_per_ton <- discounts(rate,warming$dif_per_ton, warming$year, 2021)
+SCC <- sum(discount_damage_per_ton)
+return(SCC)
+}
 ```
 
