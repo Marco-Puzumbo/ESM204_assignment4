@@ -1,18 +1,21 @@
 ---
 title: "Assignment 4"
 author: "Marco Palombo"
-date: "5/17/2022"
-output: html_document: 
+date: "5/18/2022"
+output: 
+  html_document:
     code_folding: hide
 ---
 
 ```{r setup, include = FALSE, message = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
-# include packages
 library(tidyverse)
 library(here)
 library(janitor)
+library(thematic)
+library(scales)
+library(equatiomatic)
 ```
 
 ```{r import data}
@@ -27,6 +30,7 @@ warming <- read_csv(here("warming.csv"))
 
 ```
 
+## Question 1
 ```{r question 1}
 # first add a column to the dataset of damages squared because it seems lm wants that to do a quadratic fit
 damages_fit <- damages %>% 
@@ -41,12 +45,15 @@ quad_func <- function(warming){
   return(harm)
 }
 
-# populate
-damages_fit$harm_fit = quad_func(warming))
+# populate column of harm from fit function
+damages_fit$harm_fit = quad_func(damages_fit$warming)
 
 ggplot(data = damages_fit, aes(x = warming, y = harm))+
   geom_point(aes(x = warming, y = harm))+
+  geom_smooth(method = "lm", formula = y ~ x + I(x^2))+
+  labs(x = "Warming (Degrees Celcius)", y = "Damages (figure out units)")
   
   
 ```
 
+**Figure 1: Damages vs Warming. Points are from given dataset. Blue line is quadratic fit with zero intercept.**
