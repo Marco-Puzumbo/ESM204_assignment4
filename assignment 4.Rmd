@@ -57,3 +57,40 @@ ggplot(data = damages_fit, aes(x = warming, y = harm))+
 ```
 
 **Figure 1: Damages vs Warming. Points are from given dataset. Blue line is quadratic fit with zero intercept.**
+
+## Question 2
+
+```{r}
+#populate columns of warming with damages for pulse, no pulse, difference between pulse and no pulse, difference in damage per ton co2
+#pulse
+warming$pulse_damage <- quad_func(warming$warming_pulse)
+#nopulse
+warming$nopulse_damage <- quad_func(warming$warming_baseline)
+# difference
+warming$dif <- warming$pulse_damage - warming$nopulse_damage
+
+# unclear how to interpret the per ton CO2 comment for final column. Does this mean divide the whole column by 35? Or is there some sort of temporal component. Given it is referred to as a one time release today I will assume the 35 is in the air at the beginning of the dataset and will therefore simply divide the difference by 35
+warming$dif_per_ton <- warming$dif/35e9
+
+# now generate the plots
+# no pulse
+ggplot(data = warming)+
+  geom_line(aes(x = year, y = nopulse_damage))+
+  labs(title = "no pulse", x = "Calendar year", y = "Damages (unknown units)")
+
+# pulse
+ggplot(data = warming)+
+  geom_line(aes(x = year, y = pulse_damage))+
+  labs(title = "pulse", x = "Calendar year", y = "Damages (unknown units)")
+
+# difference
+ggplot(data = warming)+
+  geom_line(aes(x = year, y = dif))+
+  labs(title = "difference", x = "Calendar year", y = "Damages (unknown units)")
+
+# difference per ton
+ggplot(data = warming)+
+  geom_line(aes(x = year, y = dif_per_ton))+
+  labs(title = "difference per ton", x = "Calendar year", y = "Damages (unknown units)")
+```
+
