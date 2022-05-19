@@ -20,13 +20,19 @@ library(equatiomatic)
 
 ```{r import data}
 #import damages data set
-damages <- read_csv(here("damages.csv")) %>% 
-  #rename column damages because having it names the same thing as the dataset is super stupid
+damages_raw <- read_csv(here("damages.csv"))
+
+# created new dataset and make some changes
+damages <- damages_raw %>% 
+#rename column damages because having it names the same thing as the dataset is super stupid
   mutate(harm = damages) %>% 
   select(-damages)
 
 #import warming data set
-warming <- read_csv(here("warming.csv"))
+warming_raw <- read_csv(here("warming.csv"))
+
+#create new dataset
+warming <- warming_raw
 
 ```
 
@@ -120,7 +126,7 @@ discount_damages <- function(rate, damage, time, present_time){
 discount <- data_frame(rates = seq(0,10, 0.1), SCC = seq(0,10, 0.1))
 
 #use for loop to calculate discounted damages up to 2100 for discount rates from 0 to 10
-for(x in 0:length(discount$rates)){
+for(x in 1:length(discount$rates)){
   #apply function from above and sum all elements in column to find net discounted cost
   discount$SCC[x] <- sum(discount_damages(discount$rates[x],warming$dif_per_ton, warming$year, 2021))
 }
@@ -143,7 +149,7 @@ eta <- 2
 g <- .01
 
 #plug into the Gordon Ramsay Rule
-r_gordon_ramsey <- rho + eta*g
+r_gordon_ramsey <- (rho + eta*g)*100
 
 # now plug into the previous equation and sum to find SCC
 discount_gordon_ramsey <- sum(discount_damages(r_gordon_ramsey,warming$dif_per_ton, warming$year, 2021))
@@ -154,6 +160,25 @@ ggplot(data = discount)+
   geom_point(x = r_gordon_ramsey, y = discount_gordon_ramsey, color = "blue", size = 4)
 ```
 
-**Figure 7: Net present value of future damages between 2021 and 2100 at time 2021 discounted with respect to various discount rates. Blue point shows discount rate and SCC associatd with recommendation made by The National Academies of Sciences, Engineering, and Medicine**
+**Figure 7: Net present value of future damages between 2021 and 2100 at time 2021 discounted with respect to various discount rates. Blue point shows discount rate and SCC associated with recommendation made by The National Academies of Sciences, Engineering, and Medicine**
 
-r value using this equation will be: `r r_gordon_ramsey`
+r value using this equation will be: `r r_gordon_ramsey` %
+
+## Question 5
+```{r}
+# buils up matrix
+warming_policy <- warming_raw %>% 
+  mutate(warming_a_1 = warming_baseline,
+         warming_a_2 = 1.5*warming_pulse,
+         warming_b = warming_baseline)
+
+#enforce 1.29 degree limit on policy b warming
+for(x in 1:length(warming_policy$warming_b)){
+  if(warming_policy$warming_b[x]>1.29){
+    warming_policy$warming_b[x] = 1.29
+  }
+}
+
+
+```
+
