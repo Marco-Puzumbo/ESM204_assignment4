@@ -166,7 +166,10 @@ r value using this equation will be: `r r_gordon_ramsey` %
 
 ## Question 5
 ```{r}
-# buils up matrix
+# define chosen discount rate
+discount_rate <- 2
+
+# build up matrix
 warming_policy <- warming_raw %>% 
   mutate(warming_a_1 = warming_baseline,
          warming_a_2 = 1.5*warming_pulse,
@@ -179,6 +182,28 @@ for(x in 1:length(warming_policy$warming_b)){
   }
 }
 
+# use quadratic fit function from above to damages from Policy A, for now keep both potential outcomes separated
+warming_policy$dam_a_1 <- quad_func(warming_policy$warming_a_1)
+warming_policy$dam_a_2 <- quad_func(warming_policy$warming_a_2)
 
+# do the same for policy B
+warming_policy$dam_b <- quad_func(warming_policy$warming_b)
+
+
+# apply discount rate and sum for years 2022-2100
+# policy A option 1
+discount_damages_a_1 <- sum(discount_damages(discount_rate,warming_policy$dam_a_1, warming$year, 2021))
+# policy a option 2
+discount_damages_a_2 <- sum(discount_damages(discount_rate,warming_policy$dam_a_2, warming$year, 2021))
+# policy b
+discount_damages_b <- sum(discount_damages(discount_rate,warming_policy$dam_b, warming$year, 2021))
+
+# account for probabilities of two potential policy A outcomes
+pol_a_1_prob <- .5
+pol_a_2_prob <- .5
+
+discount_damages_a <- pol_a_1_prob*discount_damages_a_1 + pol_a_2_prob*discount_damages_a_2
 ```
 
+Present value damages policy A: `r discount_damages_a` units
+Present value damages policy B: `r discount_damages_b` units
