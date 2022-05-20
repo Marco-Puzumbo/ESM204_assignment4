@@ -203,6 +203,13 @@ pol_a_1_prob <- .5
 pol_a_2_prob <- .5
 
 discount_damages_a <- pol_a_1_prob*discount_damages_a_1 + pol_a_2_prob*discount_damages_a_2
+
+#create and populate dataframe incorporating the costs of policy implementation
+damages_plot <- data_frame(implementation_cost = seq(0,1e14, by = 1e9)) %>% 
+  
+
+# make this stupid figure
+ggplot
 ```
 
 Present value damages policy A: `r discount_damages_a` units
