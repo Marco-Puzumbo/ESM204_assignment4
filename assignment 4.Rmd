@@ -128,7 +128,7 @@ discount <- data_frame(rates = seq(0,10, 0.1), SCC = seq(0,10, 0.1))
 #use for loop to calculate discounted damages up to 2100 for discount rates from 0 to 10
 for(x in 1:length(discount$rates)){
   #apply function from above and sum all elements in column to find net discounted cost
-  discount$SCC[x] <- sum(discount_damages(discount$rates[x],warming$dif_per_ton, warming$year, 2021))
+  discount$SCC[x] <- sum(discount_damages(discount$rates[x],warming$dif_per_ton, warming$year, 2022))
 }
 
 ggplot(data = discount)+
@@ -152,7 +152,7 @@ g <- .01
 r_gordon_ramsey <- (rho + eta*g)*100
 
 # now plug into the previous equation and sum to find SCC
-discount_gordon_ramsey <- sum(discount_damages(r_gordon_ramsey,warming$dif_per_ton, warming$year, 2021))
+discount_gordon_ramsey <- sum(discount_damages(r_gordon_ramsey,warming$dif_per_ton, warming$year, 2022))
 
 #plot this dumb thing
 ggplot(data = discount)+
@@ -172,7 +172,7 @@ discount_rate <- 2
 # build up matrix
 warming_policy <- warming_raw %>% 
   mutate(warming_a_1 = warming_baseline,
-         warming_a_2 = 1.5*warming_pulse,
+         warming_a_2 = 1.5*warming_baseline,
          warming_b = warming_baseline)
 
 #enforce 1.29 degree limit on policy b warming
@@ -192,11 +192,11 @@ warming_policy$dam_b <- quad_func(warming_policy$warming_b)
 
 # apply discount rate and sum for years 2022-2100
 # policy A option 1
-discount_damages_a_1 <- sum(discount_damages(discount_rate,warming_policy$dam_a_1, warming$year, 2021))
+discount_damages_a_1 <- sum(discount_damages(discount_rate,warming_policy$dam_a_1, warming$year, 2022))
 # policy a option 2
-discount_damages_a_2 <- sum(discount_damages(discount_rate,warming_policy$dam_a_2, warming$year, 2021))
+discount_damages_a_2 <- sum(discount_damages(discount_rate,warming_policy$dam_a_2, warming$year, 2022))
 # policy b
-discount_damages_b <- sum(discount_damages(discount_rate,warming_policy$dam_b, warming$year, 2021))
+discount_damages_b <- sum(discount_damages(discount_rate,warming_policy$dam_b, warming$year, 2022))
 
 # account for probabilities of two potential policy A outcomes
 pol_a_1_prob <- .5
@@ -208,16 +208,23 @@ discount_damages_a <- pol_a_1_prob*discount_damages_a_1 + pol_a_2_prob*discount_
 damages_plot <- data_frame(implementation_cost = seq(0,5e15, by = 1e12))
 damages_plot$pol_a <- discount_damages_a*rep(1,length(damages_plot$implementation_cost))
 damages_plot$pol_b <- discount_damages_b*rep(1,length(damages_plot$implementation_cost))+damages_plot$implementation_cost
+damages_plot$b_cross<- discount_damages_b*rep(1,length(damages_plot$implementation_cost))
   
   
-  
-
 
 # make this stupid figure
 ggplot(data = damages_plot)+
 geom_line(aes(x = implementation_cost, y = pol_a))+
   geom_line(aes(x = implementation_cost, y = pol_b))
+
+root_func <- function(x){discount_damages_a-(discount_damages_b+x)}
+intersection <- uniroot(root_func,c(2.0e15,2.5e15))$root
 ```
 
 Present value damages policy A: `r discount_damages_a` units
 Present value damages policy B: `r discount_damages_b` units
+
+Congress should use Policy B if it costs less than $`r intersection`. However is policy B's cost exceeds this threshold policy A is preferred.
+
+## Question 6
+
