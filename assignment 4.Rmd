@@ -24,7 +24,7 @@ damages_raw <- read_csv(here("damages.csv"))
 
 # created new dataset and make some changes
 damages <- damages_raw %>% 
-#rename column damages because having it names the same thing as the dataset is super stupid
+#rename column damages 
   mutate(harm = damages) %>% 
   select(-damages)
 
@@ -154,7 +154,7 @@ r_gordon_ramsey <- (rho + eta*g)*100
 # now plug into the previous equation and sum to find SCC
 discount_gordon_ramsey <- sum(discount_damages(r_gordon_ramsey,warming$dif_per_ton, warming$year, 2022))
 
-#plot this dumb thing
+#plot this out
 ggplot(data = discount)+
   geom_point(aes(x = rates, y = SCC))+
   geom_point(x = r_gordon_ramsey, y = discount_gordon_ramsey, color = "blue", size = 4)
@@ -212,7 +212,7 @@ damages_plot$b_cross<- discount_damages_b*rep(1,length(damages_plot$implementati
   
   
 
-# make this stupid figure
+# make the figure
 ggplot(data = damages_plot)+
 geom_line(aes(x = implementation_cost, y = pol_a))+
   geom_line(aes(x = implementation_cost, y = pol_b))
@@ -227,4 +227,4 @@ Present value damages policy B: `r discount_damages_b` units
 Congress should use Policy B if it costs less than $`r intersection`. However is policy B's cost exceeds this threshold policy A is preferred.
 
 ## Question 6
-
+A risk averse society would prefer option b because it has guaranteed lower future damages relative to the high damage scenario of Option A which has a 50% likelihood of happening. Option A could potentially result in higher damages if the 1.5x baseline scenario occurs. Thus a risk averse society should favor option B.
