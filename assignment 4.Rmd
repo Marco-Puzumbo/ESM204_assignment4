@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4"
-author: "Marco Palombo"
+author: "Marco Palombo and Russel Fager"
 date: "5/18/2022"
 output: 
   html_document:
@@ -37,6 +37,7 @@ warming <- warming_raw
 ```
 
 ## Question 1
+Below is a quadratic fit with zero intercept of damages with respect to degrees of warming, from the provided "damages.csv" file.
 ```{r question 1}
 # first add a column to the dataset of damages squared because it seems lm wants that to do a quadratic fit
 damages_fit <- damages %>% 
@@ -57,7 +58,7 @@ damages_fit$harm_fit = quad_func(damages_fit$warming)
 ggplot(data = damages_fit, aes(x = warming, y = harm))+
   geom_point(aes(x = warming, y = harm))+
   geom_smooth(method = "lm", formula = y ~ x + I(x^2))+
-  labs(x = "Warming (Degrees Celcius)", y = "Damages (figure out units)")
+  labs(x = "Warming (Degrees Celcius)", y = "Damages ($)")
   
   
 ```
@@ -65,7 +66,7 @@ ggplot(data = damages_fit, aes(x = warming, y = harm))+
 **Figure 1: Damages vs Warming. Points are from given dataset. Blue line is quadratic fit with zero intercept.**
 
 ## Question 2
-
+Below are several figures which use the function for damages with respect to temperature from part one to estimate the damages that will result from two warming scenarios. Figure 4 demonstrates the difference in damages between two warming scenarios and Figure 5 normalizes the damages per tonne of CO2 released in the pulse scenario.
 ```{r}
 #populate columns of warming with damages for pulse, no pulse, difference between pulse and no pulse, difference in damage per ton co2
 #pulse
@@ -82,30 +83,30 @@ warming$dif_per_ton <- warming$dif/35e9
 # no pulse
 ggplot(data = warming)+
   geom_point(aes(x = year, y = nopulse_damage))+
-  labs(title = "no pulse", x = "Calendar year", y = "Damages (unknown units)", 
+  labs(title = "no pulse", x = "Calendar year", y = "Damages ($)", 
        caption = "Figure 2: damages from no pusle with respect to year")
 
 # pulse
 ggplot(data = warming)+
   geom_point(aes(x = year, y = pulse_damage))+
-  labs(title = "pulse", x = "Calendar year", y = "Damages (unknown units)", 
+  labs(title = "pulse", x = "Calendar year", y = "Damages ($)", 
        caption = "Figure 3: damages from pulse with respect to year")
 
 # difference
 ggplot(data = warming)+
   geom_point(aes(x = year, y = dif))+
-  labs(title = "difference", x = "Calendar year", y = "Damages (unknown units)", 
+  labs(title = "difference", x = "Calendar year", y = "Damages ($)", 
        caption = "Figure 4: difference in damages with respect to year")
 
 # difference per ton
 ggplot(data = warming)+
   geom_point(aes(x = year, y = dif_per_ton))+
-  labs(title = "difference per ton", x = "Calendar year", y = "Damages (unknown units)", 
+  labs(title = "difference per ton", x = "Calendar year", y = "Damages ($)", 
        caption = "Figure 5: difference in damages per tone CO2 with respect to year")
 ```
 
 ## Question 3
-
+Below is a figure which demonstrates the expected net present social cost of carbon out till the year 2100 for 1 tonne of CO2 emitted for a range of potential discount rates.
 ```{r}
 # first calculate the net damages up to 2100 due to single tone of CO2. this will be accomplished by summing the column defined as the difference per ton
 net_harm_per_ton <- sum(warming$dif_per_ton)
@@ -140,7 +141,7 @@ ggplot(data = discount)+
 
 
 ## Question 4
-
+Below is a repeat of the previous figure with the recommended discount rate per the National Academy of Sciences, Engineering, and Medicine highlighted in blue.
 ```{r}
 #determine r from the equation given
 #define values
@@ -162,9 +163,10 @@ ggplot(data = discount)+
 
 **Figure 7: Net present value of future damages between 2021 and 2100 at time 2021 discounted with respect to various discount rates. Blue point shows discount rate and SCC associated with recommendation made by The National Academies of Sciences, Engineering, and Medicine**
 
-r value using this equation will be: `r r_gordon_ramsey` %
+Recommended discount rate per the equation provided by The National Academies of Sciences, Engineering, and Medicine: `r r_gordon_ramsey` %
 
 ## Question 5
+Below is a figure of the costs of policies A and B as defined in the assignment, incorporating both the implementation cost and the NPV of damages induced by warming out to 2100. The intersection of these two lines demonstrates a level of implementation cost at which the lower cost policy switches from B to A. 
 ```{r}
 # define chosen discount rate
 discount_rate <- 2
@@ -215,11 +217,14 @@ damages_plot$b_cross<- discount_damages_b*rep(1,length(damages_plot$implementati
 # make the figure
 ggplot(data = damages_plot)+
 geom_line(aes(x = implementation_cost, y = pol_a))+
-  geom_line(aes(x = implementation_cost, y = pol_b))
+  geom_line(aes(x = implementation_cost, y = pol_b), color = "blue")+
+  labs(x = "cost of policy implementation ($)", y = "net cost of policy ($)")
 
 root_func <- function(x){discount_damages_a-(discount_damages_b+x)}
 intersection <- uniroot(root_func,c(2.0e15,2.5e15))$root
 ```
+
+**Figure 8: **
 
 Present value damages policy A: `r discount_damages_a` units
 Present value damages policy B: `r discount_damages_b` units
